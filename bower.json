@@ -1,0 +1,22 @@
+{
+  "name": "html5boilerplate",
+  "description": "html5 boilerplate implement pug , sass , gulp",
+  "main": "index.js",
+  "authors": [
+    "@jonico22"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "html5",
+    "pug",
+    "sass"
+  ],
+  "homepage": "https://github.com/jonico22/html5boilerplate",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
