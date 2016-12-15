@@ -73,7 +73,6 @@ gulp.task('watch', function() {
             baseDir: "./public"
         }
     });
-
     gulp.watch([paths.html], ['pug']);
     gulp.watch(paths.dest + '/*.html').on('change', reload);
 });
