@@ -1,0 +1,36 @@
+include ../../config/page.pug
+meta(charset=page.charset)
+meta(http-equiv='x-ua-compatible', content='ie=edge')
+meta(name='viewport', content=page.viewport)
+
+meta(http-equiv="Content-Security-Policy" content="default-src 'self'")
+meta(name="description" content=page.description)
+
+meta(meta name="robots" content=pape.robots)
+meta(name="googlebot" content="index, follow")
+meta(name="google" content="nositelinkssearchbox")
+meta(name="google" content="notranslate")
+meta(name="google-site-verification" content=page.verification_token)
+
+meta(name="url" content=page.url)
+meta(name="rating" content="General")
+meta(http-equiv="x-dns-prefetch-control" content="off")
+
+// Disable tap highlight on IE
+meta(name='msapplication-tap-highlight', content='no')
+
+link(rel='manifest', href='manifest.json')
+// Add to homescreen for Chrome on Android
+meta(name='mobile-web-app-capable', content='yes')
+meta(name='application-name', content='Web Starter Kit')
+link(rel='icon', sizes='192x192', href='images/touch/chrome-touch-icon-192x192.png')
+// Add to homescreen for Safari on iOS
+meta(name='apple-mobile-web-app-capable', content='yes')
+meta(name='apple-mobile-web-app-status-bar-style', content='black')
+meta(name='apple-mobile-web-app-title', content='Web Starter Kit')
+link(rel='apple-touch-icon', href='images/touch/apple-touch-icon.png')
+// Tile icon for Win8 (144x144 + tile color)
+meta(name='msapplication-TileImage', content='images/touch/ms-touch-icon-144x144-precomposed.png')
+meta(name='msapplication-TileColor', content='#2F3BA2')
+// Color the status bar on mobile devices
+meta(name='theme-color', content='#2F3BA2')

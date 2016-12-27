@@ -1,0 +1,13 @@
+include ../config/page.pug
+doctype html
+html(lang=page.lang)
+  head
+    block title
+        title Default title
+    include partial/head.pug
+  body
+    .wrapper
+      include partial/header.pug
+      block content
+      include partial/footer.pug
+      block javascript
