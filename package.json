@@ -28,17 +28,16 @@
     "autoprefixer": "^6.5.4",
     "browser-sync": "^2.18.5",
     "css-mqpacker": "^5.0.1",
+    "cssnano": "^3.9.1",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
-    "gulp-cssnano": "^2.1.2",
-    "gulp-notify": "^2.2.0",
     "gulp-plumber": "^1.1.0",
     "gulp-postcss": "^6.2.0",
     "gulp-pug": "^3.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.0.0",
     "gulp-sourcemaps": "^1.9.1",
-    "gulp-util": "^3.0.7",
+    "node-normalize-scss": "^1.4.0",
     "postcss-flexibility": "^1.1.0"
   }
 }
