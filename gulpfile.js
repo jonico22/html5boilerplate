@@ -32,7 +32,8 @@ var pug = require('gulp-pug');
 var paths = {
     css: ['./*.css', '!*.min.css'],
     sass: './assest/css/**/*.scss',
-    html : './assest/html/**/*.pug'
+    pug : './assest/html/module/*.pug',
+    html: './assest/html/**/*.pug',
     dest : './public'
 }
 
@@ -52,7 +53,7 @@ function handleErrors () {
 
 // Compile pug to HTML
 gulp.task('pug', function() {
-  return gulp.src(paths.html)
+  return gulp.src(paths.pug)
     .pipe(plumber({ errorHandler: handleErrors }))
     .pipe(pug({
       pretty: true
