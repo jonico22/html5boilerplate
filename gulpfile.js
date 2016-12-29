@@ -6,9 +6,7 @@ var del = require('del');
 var rename = require('gulp-rename');
 
 //notify error
-var notify = require('gulp-notify');
 var plumber = require('gulp-plumber');
-var gutil = require('gulp-util');
 
 //browser reload
 var browserSync = require('browser-sync');
@@ -22,7 +20,7 @@ var mqpacker = require('css-mqpacker');
 var postcss = require('gulp-postcss');
 var autoprefixer = require('autoprefixer');
 var flexibility = require('postcss-flexibility');
-var cssnano = require('gulp-cssnano');
+var cssnano = require('cssnano');
 var sourcemaps = require('gulp-sourcemaps');
 
 //html
@@ -37,43 +35,74 @@ var paths = {
     dest : './public'
 }
 
-/**
- * Notify Error
- */
-function handleErrors () {
-	var args = Array.prototype.slice.call(arguments);
-	notify.onError({
-		title: 'Task Failed [<%= error.message %>',
-		message: 'error',
-		sound: 'Sosumi' // See: https://github.com/mikaelbr/node-notifier#all-notification-options-with-their-defaults
-	}).apply(this, args);
-	gutil.beep(); // Beep 'sosumi' again
-	this.emit('end'); // Prevent the 'watch' task from stopping
-}
-
 // Compile pug to HTML
 gulp.task('pug', function() {
-  return gulp.src(paths.pug)
-    .pipe(plumber({ errorHandler: handleErrors }))
+
+  return gulp.src(paths.html)
+    .pipe(plumber())
     .pipe(pug({
       pretty: true
     }))
     .pipe(gulp.dest(paths.dest));
 });
 
+// Clean files .css
+gulp.task('clean:styles', function() {
+  return del([paths.dest + '/css/style.css', paths.dest +
+    '/css/style.min.css'
+  ])
+});
+
+/**
+ * Compile sass - include plugin css
+ */
+gulp.task('css', ['clean:styles'], function() {
+  return gulp.src('./assest/css/*.scss')
+    .pipe(plumber())
+    .pipe(sourcemaps.init())
+    .pipe(sass.sync({
+      includePaths: [require('node-normalize-scss').includePaths],
+      errLogToConsole: true,
+      outputStyle: 'expanded'
+    }).on('error', sass.logError))
+    .pipe(postcss([
+      autoprefixer({
+        browsers: ['last 2 version', 'ie >= 9']
+      }),
+      mqpacker({
+        sort: true
+      }),
+      flexibility()
+    ]))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('./public/css'))
+});
+
+gulp.task('cssnano', ['css'], function() {
+  return gulp.src('./public/css/style.css')
+    .pipe(postcss([
+      cssnano({
+        discardComments: {
+          removeAll: true
+        }
+      })
+    ]))
+    .pipe(rename('style.min.css'))
+    .pipe(gulp.dest('./public/css'));
+});
+
 /**
  * Process tasks and reload browsers on file changes.
- *
  * https://www.npmjs.com/package/browser-sync
  */
 gulp.task('watch', function() {
-
-    browserSync.init({
-        browser: ["google chrome"],
-        server: {
-            baseDir: "./public"
-        }
-    });
-    gulp.watch([paths.html], ['pug']);
-    gulp.watch(paths.dest + '/*.html').on('change', reload);
+  browserSync.init({
+    browser: ["google chrome"],
+    server: {
+      baseDir: "./public"
+    }
+  });
+  gulp.watch([paths.html], ['pug']);
+  gulp.watch(paths.dest + '/*.html').on('change', reload);
+  gulp.watch(paths.sass, ['css']);
 });
