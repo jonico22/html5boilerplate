@@ -26,13 +26,17 @@ var sourcemaps = require('gulp-sourcemaps');
 //html
 var pug = require('gulp-pug');
 
+// favicon
+var favicons = require("gulp-favicons"),
+  gutil = require("gulp-util");
+
 //path
 var paths = {
-    css: ['./*.css', '!*.min.css'],
-    sass: './assest/css/**/*.scss',
-    pug : './assest/html/module/*.pug',
-    html: './assest/html/**/*.pug',
-    dest : './public'
+  css: ['./*.css', '!*.min.css'],
+  sass: './assest/css/**/*.scss',
+  pug: './assest/html/module/*.pug',
+  html: './assest/html/**/*.pug',
+  dest: './public'
 }
 
 // Compile pug to HTML
@@ -105,4 +109,38 @@ gulp.task('watch', function() {
   gulp.watch([paths.html], ['pug']);
   gulp.watch(paths.dest + '/*.html').on('change', reload);
   gulp.watch(paths.sass, ['css']);
+});
+
+gulp.task("favicon", function() {
+  return gulp.src("./assest/img/logo.png").pipe(favicons({
+      appName: "My App",
+      appDescription: "This is my application",
+      background: "#fff",
+      path: "img/static",
+      display: "standalone",
+      orientation: "portrait",
+      start_url: "/?homescreen=1",
+      version: 1.0,
+      logging: false,
+      icons: {
+        android: true,
+        appleIcon: true,
+        appleStartup: false,
+        coast: false,
+        favicons: true,
+        firefox: false,
+        windows: true,
+        yandex: false
+      }
+    }))
+    .on("error", gutil.log)
+    .pipe(gulp.dest("./public/img/static"));
+});
+
+var fontgen = require('gulp-fontgen');
+gulp.task('fontgen', function() {
+  return gulp.src("./assest/fonts/*.{ttf,otf}")
+    .pipe(fontgen({
+      dest: "./public/static/fonts"
+    }));
 });

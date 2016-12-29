@@ -30,13 +30,16 @@
     "css-mqpacker": "^5.0.1",
     "cssnano": "^3.9.1",
     "del": "^2.2.2",
+    "favicons": "^4.8.3",
     "gulp": "^3.9.1",
+    "gulp-favicons": "^2.2.7",
     "gulp-plumber": "^1.1.0",
     "gulp-postcss": "^6.2.0",
     "gulp-pug": "^3.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.0.0",
     "gulp-sourcemaps": "^1.9.1",
+    "gulp-util": "^3.0.8",
     "node-normalize-scss": "^1.4.0",
     "postcss-flexibility": "^1.1.0"
   }
