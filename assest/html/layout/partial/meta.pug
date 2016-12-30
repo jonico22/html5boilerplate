@@ -6,13 +6,13 @@ meta(name='viewport', content=page.viewport)
 meta(http-equiv="Content-Security-Policy" content="default-src 'self'")
 meta(name="description" content=page.description)
 
-meta(meta name="robots" content=pape.robots)
+meta(name="robots" content= page.robots )
 meta(name="googlebot" content="index, follow")
 meta(name="google" content="nositelinkssearchbox")
 meta(name="google" content="notranslate")
 meta(name="google-site-verification" content=page.verification_token)
 
-meta(name="url" content=page.url)
+meta(name="url" content="/")
 meta(name="rating" content="General")
 meta(http-equiv="x-dns-prefetch-control" content="off")
 
@@ -23,35 +23,58 @@ link(rel='manifest', href='manifest.json')
 
 //- Add to homescreen for Chrome on Android
 meta(name='mobile-web-app-capable', content='yes')
-meta(name='application-name', content=page.appName)
+meta(name='application-name', content=page.siteName)
 //- Color the status bar on mobile devices
 meta(name='theme-color', content=page.themeColor)
 
 //- Add to homescreen for Safari on iOS
 meta(name='apple-mobile-web-app-capable', content='yes')
 meta(name='apple-mobile-web-app-status-bar-style', content='black')
-meta(name='apple-mobile-web-app-title', content=page.appName)
+meta(name='apple-mobile-web-app-title', content=page.siteName)
 
 //- Touch icons
-link(rel='apple-touch-icon', sizes="57x57" href="apple-touch-icon-57x57.png")
-link(rel='apple-touch-icon', sizes="60x60" href="apple-touch-icon-60x60.png")
-link(rel='apple-touch-icon', sizes="72x72" href="apple-touch-icon-72x72.png")
-link(rel='apple-touch-icon', sizes="76x76" href="apple-touch-icon-76x76.png")
-link(rel='apple-touch-icon', sizes="114x114" href="apple-touch-icon-114x114.png")
-link(rel='apple-touch-icon', sizes="120x120" href="apple-touch-icon-120x120.png")
-link(rel='apple-touch-icon', sizes="144x144" href="apple-touch-icon-144x144.png")
-link(rel='apple-touch-icon', sizes="152x152" href="apple-touch-icon-152x152.png")
-link(rel='apple-touch-icon', sizes="180x180" href="apple-touch-icon-180x180.png")
+link(rel='apple-touch-icon', sizes="57x57" href=`${page.img}/apple-touch-icon-57x57.png`)
+link(rel='apple-touch-icon', sizes="60x60" href=`${page.img}/apple-touch-icon-60x60.png`)
+link(rel='apple-touch-icon', sizes="72x72" href=`${page.img}/apple-touch-icon-72x72.png`)
+link(rel='apple-touch-icon', sizes="76x76" href=`${page.img}/apple-touch-icon-76x76.png`)
+link(rel='apple-touch-icon', sizes="114x114" href=`${page.img}/apple-touch-icon-114x114.png`)
+link(rel='apple-touch-icon', sizes="120x120" href=`${page.img}/apple-touch-icon-120x120.png`)
+link(rel='apple-touch-icon', sizes="144x144" href=`${page.img}/apple-touch-icon-144x144.png`)
+link(rel='apple-touch-icon', sizes="152x152" href=`${page.img}/apple-touch-icon-152x152.png`)
+link(rel='apple-touch-icon', sizes="180x180" href=`${page.img}/apple-touch-icon-180x180.png`)
 
 //- MS
-meta(name='msapplication-TileImage', content='mstile-144x144.png')
+meta(name='msapplication-TileImage', content=`${page.img}/mstile-144x144.png`)
 meta(name='msapplication-TileColor', content=page.themeColor)
 meta(name="msapplication-config" content="browserconfig.xml")
 
 //- Pinned Site - Safari
 link(rel="mask-icon" href="path/to/icon.svg" color="red")
 
-link(rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png")
-link(rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png")
-link(rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png")
-link(rel="shortcut icon" href="favicon.ico")
+link(rel="icon" type="image/png" sizes="32x32" href=`${page.img}/favicon-32x32.png`)
+link(rel="icon" type="image/png" sizes="192x192" href=`${page.img}/android-chrome-192x192.png`)
+link(rel="icon" type="image/png" sizes="16x16" href=`${page.img}/favicon-16x16.png`)
+link(rel="shortcut icon" href=`${page.img}/favicon.ico` )
+
+meta(property="fb:app_id" content=page.fbId)
+meta(property="og:url" content="/")
+meta(property="og:type" content=page.type)
+meta(property="og:title" content="Content Title")
+meta(property="og:image" content=`${page.img}/facebook.jpg`)
+meta(property="og:description" content=page.description)
+meta(property="og:site_name" content=page.siteName)
+meta(property="og:locale" content=page.locale)
+meta(property="article:author" content=page.author)
+
+meta(name="twitter:card" content="summary")
+meta(name="twitter:site" content=page.twitter_acount_site)
+meta(name="twitter:creator" content=page.twitter_individual)
+meta(name="twitter:url" content="/")
+meta(name="twitter:title" content="Content Title")
+meta(name="twitter:description" content=page.twitter_description)
+meta(name="twitter:image" content=`${page.img}/twitter.jpg`)
+
+link(href=`https://plus.google.com/+${YourPage}` rel="publisher")
+meta(itemprop="name" content="Content Title")
+meta(itemprop="description" content=page.description)
+meta(itemprop="image" content=`${page.img}/googleplus.jpg`)

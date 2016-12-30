@@ -42,7 +42,7 @@ var paths = {
 // Compile pug to HTML
 gulp.task('pug', function() {
 
-  return gulp.src(paths.html)
+  return gulp.src(paths.pug)
     .pipe(plumber())
     .pipe(pug({
       pretty: true
@@ -116,7 +116,7 @@ gulp.task("favicon", function() {
       appName: "My App",
       appDescription: "This is my application",
       background: "#fff",
-      path: "img/static",
+      path: "img/",
       display: "standalone",
       orientation: "portrait",
       start_url: "/?homescreen=1",
@@ -134,13 +134,5 @@ gulp.task("favicon", function() {
       }
     }))
     .on("error", gutil.log)
-    .pipe(gulp.dest("./public/img/static"));
-});
-
-var fontgen = require('gulp-fontgen');
-gulp.task('fontgen', function() {
-  return gulp.src("./assest/fonts/*.{ttf,otf}")
-    .pipe(fontgen({
-      dest: "./public/static/fonts"
-    }));
+    .pipe(gulp.dest("./public/img"));
 });
