@@ -136,3 +136,9 @@ gulp.task("favicon", function() {
     .on("error", gutil.log)
     .pipe(gulp.dest("./public/img"));
 });
+
+gulp.task('fonts', () => {
+  gulp
+    .src('./assest/fonts/*.*')
+    .pipe(gulp.dest('./public/fonts'));
+});
