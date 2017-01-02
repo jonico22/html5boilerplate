@@ -2,9 +2,9 @@ include ../config/page.pug
 doctype html
 html(lang=page.lang)
   head
-    block title
-        title Default title
     include partial/head.pug
+    block css
+      link(rel='stylesheet', href='css/style.css')
   body
     .wrapper
       include partial/header.pug
