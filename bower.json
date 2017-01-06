@@ -16,7 +16,12 @@
     "**/.*",
     "node_modules",
     "bower_components",
+    "dist/js/vendor",
     "test",
-    "tests"
-  ]
+    "tests",
+    "src"
+  ],
+  "devDependencies": {
+    "jquery": "2"
+  }
 }

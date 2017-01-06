@@ -2,8 +2,6 @@ include ../../config/page.pug
 meta(charset=page.charset)
 meta(http-equiv='x-ua-compatible', content='ie=edge')
 meta(name='viewport', content=page.viewport)
-
-meta(http-equiv="Content-Security-Policy" content="default-src 'self'")
 meta(name="description" content=page.description)
 
 meta(name="robots" content= page.robots )
@@ -51,7 +49,6 @@ meta(name="msapplication-config" content="browserconfig.xml")
 
 //- Pinned Site - Safari
 link(rel="mask-icon" href=`${page.img}/favicon.svg` color="red")
-
 link(rel="icon" type="image/png" sizes="32x32" href=`${page.img}/favicon-32x32.png`)
 link(rel="icon" type="image/png" sizes="192x192" href=`${page.img}/android-chrome-192x192.png`)
 link(rel="icon" type="image/png" sizes="16x16" href=`${page.img}/favicon-16x16.png`)
