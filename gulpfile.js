@@ -40,6 +40,11 @@ var robots = require('gulp-robots');
 var webpack = require("webpack");
 var webpackConfig = require("./webpack.config.js");
 
+//svg generator
+var svgSprite = require("gulp-svg-sprites");
+var filter = require('gulp-filter');
+var svg2png = require('gulp-svg2png');
+
 var dir = {
   src: './src',
   dist: './dist'
@@ -51,8 +56,21 @@ var paths = {
   pug: dir.src + '/html/module/*.pug',
   fonts: dir.src + '/fonts',
   img: dir.src + '/img',
-  js: dir.src + '/js/**/*.js'
+  js: dir.src + '/js/**/*.js',
+  svg: dir.src + '/svg/*.svg'
 }
+
+gulp.task('sprites', function() {
+  return gulp.src(paths.svg)
+    .pipe(svgSprite({
+      cssFile: "_sprite.scss",
+      preview: false
+    }))
+    .pipe(gulp.dest(dir.dist))
+    .pipe(filter("**/*.svg")) // Filter out everything except the SVG file
+    .pipe(svg2png()) // Create a PNG
+    .pipe(gulp.dest(dir.dist));
+});
 
 gulp.task("favicon", function() {
   return gulp
@@ -120,7 +138,7 @@ gulp.task('pug', function() {
     .pipe(pug({
       pretty: true
     }))
-    .pipe(gulp.dest(dir.dist));
+    .pipe(gulp.dest(dir.dist))
 });
 
 // Clean files .css
