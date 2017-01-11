@@ -1,0 +1,47 @@
+.icon {
+    font-size: 10px;
+}
+
+.icon:before {
+    content:' ';
+    vertical-align:middle;
+    display: inline-block;
+    background-image: url("../svg/sprite.svg");
+    background-repeat: no-repeat;
+    background-size: 11.2197em 33.9em;
+}
+
+.no-svg .icon:before {
+    background-image: url("../svg/sprite.png");
+}
+
+
+
+  .icon.facebook:before {
+      background-position: 0em 0em;
+      width: 11.2196em;
+      height: 11.2196em;
+  }
+
+
+
+
+  .icon.google-plus:before {
+      background-position: 0em -11.3em;
+      width: 11.2196em;
+      height: 11.2196em;
+  }
+
+
+
+
+  .icon.gorjeo:before {
+      background-position: 0em -22.6em;
+      width: 11.2197em;
+      height: 11.2197em;
+  }
+
+
+
+
+

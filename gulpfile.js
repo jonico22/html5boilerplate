@@ -2,48 +2,24 @@
 var gulp = require('gulp');
 
 // helpers
-var del = require('del'),
-  rename = require('gulp-rename')
-gutil = require("gulp-util");
-
-//notify error
-var plumber = require('gulp-plumber');
-
+var del = require('del');
 //browser reload
-var browserSync = require('browser-sync').create(),
-  reload = browserSync.reload;
-
-//css
-var sass = require('gulp-sass');
+var browserSync = require('browser-sync').create();
+var bulkSass = require('gulp-sass-bulk-import');
 
 //plugins css
 var mqpacker = require('css-mqpacker'),
-  postcss = require('gulp-postcss'),
   autoprefixer = require('autoprefixer'),
-  flexibility = require('postcss-flexibility'),
-  cssnano = require('cssnano'),
-  sourcemaps = require('gulp-sourcemaps');
+  cssnano = require('cssnano');
 
-//html
-var pug = require('gulp-pug');
-
-// favicon
-var favicons = require("gulp-favicons");
-
-// generate humans.txt
-var humans = require('gulp-humans');
-
-// generate robots.txt
-var robots = require('gulp-robots');
-
-// confif
+// js
 var webpack = require("webpack");
 var webpackConfig = require("./webpack.config.js");
 
 //svg generator
 var svgSprite = require("gulp-svg-sprites");
-var filter = require('gulp-filter');
-var svg2png = require('gulp-svg2png');
+var gulpLoadPlugins = require('gulp-load-plugins');
+var plugins = gulpLoadPlugins();
 
 var dir = {
   src: './src',
@@ -60,44 +36,73 @@ var paths = {
   svg: dir.src + '/svg/*.svg'
 }
 
-gulp.task('sprites', function() {
-  return gulp.src(paths.svg)
-    .pipe(svgSprite({
-      cssFile: "_sprite.scss",
-      preview: false
-    }))
+var config = {
+  browsers: ['last 2 version', 'ie >= 9'],
+  humans: {
+    team: 'Jose Luis Yana - developer - @jonico22',
+    thanks: [
+      'Node (@nodejs on Twitter)',
+      'Gulp (@gulpjs on Twitter)'
+    ],
+    site: [
+      'Standards: HTML5, CSS3',
+      'Components: jQuery, Normalize.css',
+      'Software: Atom'
+    ]
+  },
+  robots: {
+    useragent: '*',
+    disallow: ' '
+  },
+  favicon: {
+    appName: "My App",
+    appDescription: "This is my application",
+    background: "#fff",
+    path: "img/",
+    display: "standalone",
+    orientation: "portrait",
+    start_url: "/?homescreen=1",
+    version: 1.0,
+    logging: false,
+    icons: {
+      android: true,
+      appleIcon: true,
+      appleStartup: false,
+      coast: false,
+      favicons: true,
+      firefox: false,
+      windows: true,
+      yandex: false
+    }
+  }
+}
+gulp.task('humans', function() {
+  gulp.src('index.html')
+    .pipe(plugins.humans(config.humans))
     .pipe(gulp.dest(dir.dist))
-    .pipe(filter("**/*.svg")) // Filter out everything except the SVG file
-    .pipe(svg2png()) // Create a PNG
-    .pipe(gulp.dest(dir.dist));
+    .pipe(plugins.size({
+      title: 'humans'
+    }))
 });
 
-gulp.task("favicon", function() {
-  return gulp
-    .src(paths.img + "/logo.png").pipe(favicons({
-      appName: "My App",
-      appDescription: "This is my application",
-      background: "#fff",
-      path: "img/",
-      display: "standalone",
-      orientation: "portrait",
-      start_url: "/?homescreen=1",
-      version: 1.0,
-      logging: false,
-      icons: {
-        android: true,
-        appleIcon: true,
-        appleStartup: false,
-        coast: false,
-        favicons: true,
-        firefox: false,
-        windows: true,
-        yandex: false
-      }
+gulp.task('robots', function() {
+  gulp.src('index.html')
+    .pipe(plugins.robots(config.robots))
+    .pipe(gulp.dest(dir.dist))
+    .pipe(plugins.size({
+      title: 'robots'
     }))
-    .on("error", gutil.log)
-    .pipe(gulp.dest(dir.dist + "/img"))
 });
+
+gulp.task('htaccess', function() {
+  gulp.src('node_modules/apache-server-configs/dist/.htaccess', {
+      dot: true
+    })
+    .pipe(gulp.dest(dir.dist))
+    .pipe(plugins.size({
+      title: 'htaccess'
+    }))
+})
 
 gulp.task('fonts', () => {
   gulp
@@ -105,37 +110,58 @@ gulp.task('fonts', () => {
     .pipe(gulp.dest(dir.dist + '/fonts'));
 });
 
-gulp.task('humans', function() {
-  gulp.src('index.html')
-    .pipe(humans({
-      team: 'Jose Luis Yana - developer - @jonico22',
-      thanks: [
-        'Node (@nodejs on Twitter)',
-        'Gulp (@gulpjs on Twitter)'
-      ],
-      site: [
-        'Standards: HTML5, CSS3',
-        'Components: jQuery, Normalize.css',
-        'Software: Atom'
-      ]
-    }))
+gulp.task("generate:favicon", function() {
+  return gulp
+    .src(paths.img + "/logo.png")
+    .pipe(plugins.favicons(config.favicon))
+    .on("error", plugins.util.log)
+    .pipe(gulp.dest(dir.dist + "/img"))
+});
+
+gulp.task('move:files', ['generate:favicon'], function() {
+  return gulp
+    .src(dir.dist + "/img/*.+(xml|json)")
     .pipe(gulp.dest(dir.dist));
 });
 
-gulp.task('robots', function() {
-  gulp.src('index.html')
-    .pipe(robots({
-      useragent: '*',
-      disallow: ' '
-    }))
-    .pipe(gulp.dest(dir.dist));
+gulp.task('favicon', ['move:files'], function() {
+  return del(dir.dist + '/img/*.+(xml|json)');
 });
+
+gulp.task('svg', function() {
+  return gulp.src(paths.svg)
+    .pipe(svgSprite({
+      cssFile: "_sprite.scss",
+      preview: false
+    }))
+    .pipe(gulp.dest(dir.dist))
+    .pipe(plugins.filter("**/*.svg"))
+    .pipe(plugins.svg2png())
+    .pipe(gulp.dest(dir.dist))
+    .pipe(plugins.size({
+      title: 'svg'
+    }))
+})
+
+gulp.task('copy:sprites', ['svg'], function() {
+  gulp.src(dir.dist + '/_sprite.scss')
+    .pipe(gulp.dest(dir.src + '/css/plugins'))
+});
+
+gulp.task('sprites', ['copy:sprites'], function() {
+  return del(dir.dist + '/_sprite.scss');
+})
+
+gulp.task('normalize', function() {
+  gulp.src('node_modules/node-normalize-scss/_normalize.scss')
+    .pipe(gulp.dest(dir.src + '/css/plugins'))
+})
 
 // Compile pug to HTML
 gulp.task('pug', function() {
   return gulp.src(paths.pug)
-    .pipe(plumber())
-    .pipe(pug({
+    .pipe(plugins.plumber())
+    .pipe(plugins.pug({
       pretty: true
     }))
     .pipe(gulp.dest(dir.dist))
@@ -143,45 +169,44 @@ gulp.task('pug', function() {
 
 // Clean files .css
 gulp.task('clean:styles', function() {
-  return del([dir.dist + '/css/style.css', dir.dist +
-    '/css/style.min.css'
-  ])
+  return del(dir.dist + '/css/*.css')
 });
-
-// clean others files
-gulp.task('move', function() {
-  return gulp
-    .src(dir.dist + "/img/*.+(xml|json)")
-    .pipe(gulp.dest(dir.dist));
-});
-
 
 /**
  * Compile sass - include plugins
  */
+
 gulp.task('css', ['clean:styles'], function() {
   return gulp.src(paths.sass)
-    .pipe(plumber())
-    .pipe(sourcemaps.init())
-    .pipe(sass.sync({
-      includePaths: [require('node-normalize-scss').includePaths],
+    .pipe(plugins.plumber())
+    .pipe(bulkSass())
+    .pipe(plugins.sourcemaps.init())
+    .pipe(plugins.sass.sync({
       errLogToConsole: true,
       outputStyle: 'expanded'
     }).on('error', sass.logError))
-    .pipe(postcss([
-      autoprefixer({
-        browsers: ['last 2 version', 'ie >= 9']
-      }),
+    .pipe(plugins.postcss([
+      autoprefixer(config.browser),
       mqpacker({
         sort: true
-      }),
-      flexibility()
+      })
     ]))
-    .pipe(sourcemaps.write())
+    .pipe(plugins.sourcemaps.write())
     .pipe(gulp.dest(dir.dist + "/css"))
 });
 
-
+gulp.task('cssnano', ['css'], function() {
+  return gulp.src(dir.dist + '/css/style.css')
+    .pipe(postcss([
+      cssnano({
+        discardComments: {
+          removeAll: true
+        }
+      })
+    ]))
+    .pipe(plugins.rename('style.min.css'))
+    .pipe(gulp.dest(dir.dist + '/css'));
+});
 
 gulp.task('watch', function() {
   browserSync.init({
@@ -205,19 +230,6 @@ gulp.task("build-dev", ["webpack:build-dev"], function() {
 // Production build
 gulp.task("build", ["webpack:build"]);
 
-gulp.task('cssnano', ['css'], function() {
-  return gulp.src(dir.dist + '/css/style.css')
-    .pipe(postcss([
-      cssnano({
-        discardComments: {
-          removeAll: true
-        }
-      })
-    ]))
-    .pipe(rename('style.min.css'))
-    .pipe(gulp.dest(dir.dist + '/css'));
-});
-
 gulp.task("webpack:build", function(callback) {
 
   var myConfig = Object.create(webpackConfig);
@@ -233,7 +245,7 @@ gulp.task("webpack:build", function(callback) {
 
   webpack(myConfig, function(err, stats) {
     if (err) throw new gutil.PluginError("webpack:build", err);
-    gutil.log("[webpack:build]", stats.toString({
+    plugins.util.log("[webpack:build]", stats.toString({
       colors: true
     }));
     callback();
@@ -252,7 +264,7 @@ gulp.task("webpack:build-dev", function(callback) {
 
   devCompiler.run(function(err, stats) {
     if (err) throw new gutil.PluginError("webpack:build-dev", err);
-    gutil.log("[webpack:build-dev]", stats.toString({
+    plugins.util.log("[webpack:build-dev]", stats.toString({
       colors: true
     }));
     callback();
