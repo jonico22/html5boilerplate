@@ -12,7 +12,6 @@ meta(name="google-site-verification" content=page.verification_token)
 
 meta(name="url" content="/")
 meta(name="rating" content="General")
-meta(http-equiv="x-dns-prefetch-control" content="off")
 
 //- Disable tap highlight on IE
 meta(name='msapplication-tap-highlight', content='no')
@@ -48,7 +47,7 @@ meta(name='msapplication-TileColor', content=page.themeColor)
 meta(name="msapplication-config" content="browserconfig.xml")
 
 //- Pinned Site - Safari
-link(rel="mask-icon" href=`${page.img}/favicon.svg` color="red")
+link(rel="mask-icon" href=`${page.img}/favicon.svg`)
 link(rel="icon" type="image/png" sizes="32x32" href=`${page.img}/favicon-32x32.png`)
 link(rel="icon" type="image/png" sizes="192x192" href=`${page.img}/android-chrome-192x192.png`)
 link(rel="icon" type="image/png" sizes="16x16" href=`${page.img}/favicon-16x16.png`)
@@ -73,6 +72,3 @@ meta(name="twitter:description" content=page.twitter_description)
 meta(name="twitter:image" content=`${page.img}/twitter.jpg`)
 
 link(href=`https://plus.google.com/+${page.googlePlus}` rel="publisher")
-meta(itemprop="name" content="Content Title")
-meta(itemprop="description" content=page.description)
-meta(itemprop="image" content=`${page.img}/googleplus.jpg`)

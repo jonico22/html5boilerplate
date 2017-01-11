@@ -3,6 +3,8 @@ var gulp = require('gulp');
 
 // helpers
 var del = require('del');
+var runSequence = require('run-sequence');
+
 //browser reload
 var browserSync = require('browser-sync').create();
 var bulkSass = require('gulp-sass-bulk-import');
@@ -76,6 +78,15 @@ var config = {
     }
   }
 }
+
+var w3cjs = require('gulp-w3cjs');
+
+gulp.task('w3cjs', function() {
+  gulp.src(dir.dist + '/*.html')
+    .pipe(w3cjs())
+    .pipe(w3cjs.reporter());
+});
+
 gulp.task('humans', function() {
   gulp.src('index.html')
     .pipe(plugins.humans(config.humans))
@@ -165,6 +176,9 @@ gulp.task('pug', function() {
       pretty: true
     }))
     .pipe(gulp.dest(dir.dist))
+    .pipe(plugins.size({
+      title: 'html'
+    }))
 });
 
 // Clean files .css
@@ -184,7 +198,7 @@ gulp.task('css', ['clean:styles'], function() {
     .pipe(plugins.sass.sync({
       errLogToConsole: true,
       outputStyle: 'expanded'
-    }).on('error', sass.logError))
+    }).on('error', plugins.sass.logError))
     .pipe(plugins.postcss([
       autoprefixer(config.browser),
       mqpacker({
@@ -193,11 +207,20 @@ gulp.task('css', ['clean:styles'], function() {
     ]))
     .pipe(plugins.sourcemaps.write())
     .pipe(gulp.dest(dir.dist + "/css"))
+    .pipe(plugins.size({
+      title: 'css'
+    }))
+});
+
+gulp.task('default', function(callback) {
+  runSequence('pug', ['humans', 'robots', 'htaccess', 'fonts', 'sprites'],
+    'normalize', 'css',
+    callback);
 });
 
 gulp.task('cssnano', ['css'], function() {
   return gulp.src(dir.dist + '/css/style.css')
-    .pipe(postcss([
+    .pipe(plugins.postcss([
       cssnano({
         discardComments: {
           removeAll: true
@@ -205,7 +228,10 @@ gulp.task('cssnano', ['css'], function() {
       })
     ]))
     .pipe(plugins.rename('style.min.css'))
-    .pipe(gulp.dest(dir.dist + '/css'));
+    .pipe(gulp.dest(dir.dist + '/css'))
+    .pipe(plugins.size({
+      title: 'min css'
+    }))
 });
 
 gulp.task('watch', function() {
@@ -252,21 +278,48 @@ gulp.task("webpack:build", function(callback) {
   });
 });
 
-// modify some webpack config options
 var myDevConfig = Object.create(webpackConfig);
 myDevConfig.devtool = "sourcemap";
 myDevConfig.debug = true;
 
-// create a single instance of the compiler to allow caching
 var devCompiler = webpack(myDevConfig);
 
 gulp.task("webpack:build-dev", function(callback) {
-
   devCompiler.run(function(err, stats) {
     if (err) throw new gutil.PluginError("webpack:build-dev", err);
     plugins.util.log("[webpack:build-dev]", stats.toString({
       colors: true
     }));
     callback();
+  })
+});
+
+var psi = require('psi');
+var site = 'http://www.html5rocks.com';
+var key = '';
+
+// Please feel free to use the `nokey` option to try out PageSpeed
+// Insights as part of your build process. For more frequent use,
+// we recommend registering for your own API key. For more info:
+// https://developers.google.com/speed/docs/insights/v2/getting-started
+
+gulp.task('mobile', function() {
+  return psi(site, {
+    // key: key
+    nokey: 'true',
+    strategy: 'mobile',
+  }).then(function(data) {
+    console.log('Speed score: ' + data.ruleGroups.SPEED.score);
+    console.log('Usability score: ' + data.ruleGroups.USABILITY.score);
+  });
+});
+
+gulp.task('desktop', function() {
+  return psi(site, {
+    nokey: 'true',
+    // key: key,
+    strategy: 'desktop',
+  }).then(function(data) {
+    console.log('Speed score: ' + data.ruleGroups.SPEED.score);
   });
 });
