@@ -4,7 +4,7 @@ var gulp = require('gulp');
 // helpers
 var del = require('del');
 var runSequence = require('run-sequence');
-
+var pngquant = require('imagemin-pngquant');
 //browser reload
 var browserSync = require('browser-sync').create();
 var bulkSass = require('gulp-sass-bulk-import');
@@ -18,10 +18,10 @@ var mqpacker = require('css-mqpacker'),
 var webpack = require("webpack");
 var webpackConfig = require("./webpack.config.js");
 
-//svg generator
-var svgSprite = require("gulp-svg-sprites");
 var gulpLoadPlugins = require('gulp-load-plugins');
 var plugins = gulpLoadPlugins();
+
+var generaterSvg = require('gulp-svg-sprite');
 
 var dir = {
   src: './src',
@@ -33,9 +33,10 @@ var paths = {
   sass: dir.src + '/css/**/*.scss',
   pug: dir.src + '/html/module/*.pug',
   fonts: dir.src + '/fonts',
-  img: dir.src + '/img',
+  img: dir.src + '/img/**/*.+(png|jpeg|jpg|gif)',
   js: dir.src + '/js/**/*.js',
-  svg: dir.src + '/svg/*.svg'
+  svg: dir.src + '/svg/*.svg',
+  spriteSvg: dir.src + '/sprites/*.svg'
 }
 
 var config = {
@@ -76,15 +77,57 @@ var config = {
       windows: true,
       yandex: false
     }
+  },
+  sprite: {
+    mode: {
+      css: {
+        prefix: ".icon-",
+        render: {
+          scss: true
+        }
+      }
+    }
+  },
+  imagemin: {
+    progressive: true,
+    interlaced: true,
+    use: [pngquant()]
+  },
+  svgmin: {
+    plugins: [{
+      convertColors: false
+    }]
   }
 }
 
-var w3cjs = require('gulp-w3cjs');
+gulp.task('img', function() {
+  gulp.src(paths.img)
+    .pipe(plugins.imagemin(config.imagemin))
+    .pipe(gulp.dest(dir.dist + '/img'));
+})
+
+gulp.task('webp', function() {
+  gulp.src(dir.src + '/img/**/*.+(png|jpeg|jpg)')
+    .pipe(plugins.webp())
+    .pipe(gulp.dest(dir.dist + '/img/webp'))
+    .pipe(plugins.size({
+      title: 'webp'
+    }));
+})
+
+gulp.task('svg', function() {
+  gulp.src(paths.spriteSvg)
+    .pipe(plugins.svgmin(config.svgmin))
+    .pipe(gulp.dest(dir.dist + '/svg'))
+    .pipe(plugins.size({
+      title: 'min svg'
+    }));
+});
 
 gulp.task('w3cjs', function() {
   gulp.src(dir.dist + '/*.html')
-    .pipe(w3cjs())
-    .pipe(w3cjs.reporter());
+    .pipe(plugins.w3cjs())
+    .pipe(plugins.w3cjs.reporter());
 });
 
 gulp.task('humans', function() {
@@ -130,8 +173,7 @@ gulp.task("generate:favicon", function() {
 });
 
 gulp.task('move:files', ['generate:favicon'], function() {
-  return gulp
-    .src(dir.dist + "/img/*.+(xml|json)")
+  return gulp.src(dir.dist + "/img/*.+(xml|json)")
     .pipe(gulp.dest(dir.dist));
 });
 
@@ -139,28 +181,24 @@ gulp.task('favicon', ['move:files'], function() {
   return del(dir.dist + '/img/*.+(xml|json)');
 });
 
-gulp.task('svg', function() {
-  return gulp.src(paths.svg)
-    .pipe(svgSprite({
-      cssFile: "_sprite.scss",
-      preview: false
-    }))
-    .pipe(gulp.dest(dir.dist))
-    .pipe(plugins.filter("**/*.svg"))
-    .pipe(plugins.svg2png())
+gulp.task('generate:sprites', function() {
+  return gulp.src(paths.spriteSvg)
+    .pipe(plugins.plumber())
+    .pipe(generaterSvg(config.sprite))
     .pipe(gulp.dest(dir.dist))
     .pipe(plugins.size({
-      title: 'svg'
+      title: 'sprite - svg'
     }))
 })
 
-gulp.task('copy:sprites', ['svg'], function() {
-  gulp.src(dir.dist + '/_sprite.scss')
+gulp.task('copy:sprites', ['generate:sprites'], function() {
+  gulp.src(dir.dist + '/css/sprite.scss')
+    .pipe(plugins.rename('_sprite.scss'))
     .pipe(gulp.dest(dir.src + '/css/plugins'))
 });
 
 gulp.task('sprites', ['copy:sprites'], function() {
-  return del(dir.dist + '/_sprite.scss');
+  return del(dir.dist + '/css/sprite.scss');
 })
 
 gulp.task('normalize', function() {
@@ -279,7 +317,8 @@ gulp.task("webpack:build", function(callback) {
 });
 
 var myDevConfig = Object.create(webpackConfig);
-myDevConfig.devtool = "sourcemap";
+myDevConfig.devtool =
+  "sourcemap";
 myDevConfig.debug = true;
 
 var devCompiler = webpack(myDevConfig);
@@ -292,34 +331,4 @@ gulp.task("webpack:build-dev", function(callback) {
     }));
     callback();
   })
-});
-
-var psi = require('psi');
-var site = 'http://www.html5rocks.com';
-var key = '';
-
-// Please feel free to use the `nokey` option to try out PageSpeed
-// Insights as part of your build process. For more frequent use,
-// we recommend registering for your own API key. For more info:
-// https://developers.google.com/speed/docs/insights/v2/getting-started
-
-gulp.task('mobile', function() {
-  return psi(site, {
-    // key: key
-    nokey: 'true',
-    strategy: 'mobile',
-  }).then(function(data) {
-    console.log('Speed score: ' + data.ruleGroups.SPEED.score);
-    console.log('Usability score: ' + data.ruleGroups.USABILITY.score);
-  });
-});
-
-gulp.task('desktop', function() {
-  return psi(site, {
-    nokey: 'true',
-    // key: key,
-    strategy: 'desktop',
-  }).then(function(data) {
-    console.log('Speed score: ' + data.ruleGroups.SPEED.score);
-  });
 });
