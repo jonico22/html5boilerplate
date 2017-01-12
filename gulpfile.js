@@ -97,6 +97,11 @@ var config = {
     plugins: [{
       convertColors: false
     }]
+  },
+  htmlmin: {
+    removeComments: true,
+    collapseWhitespace: true,
+    collapseBooleanAttributes: true,
   }
 }
 
@@ -227,7 +232,6 @@ gulp.task('clean:styles', function() {
 /**
  * Compile sass - include plugins
  */
-
 gulp.task('css', ['clean:styles'], function() {
   return gulp.src(paths.sass)
     .pipe(plugins.plumber())
@@ -250,6 +254,7 @@ gulp.task('css', ['clean:styles'], function() {
     }))
 });
 
+
 gulp.task('default', function(callback) {
   runSequence('pug', ['humans', 'robots', 'htaccess', 'fonts', 'sprites'],
     'normalize', 'css',
@@ -269,6 +274,15 @@ gulp.task('cssnano', ['css'], function() {
     .pipe(gulp.dest(dir.dist + '/css'))
     .pipe(plugins.size({
       title: 'min css'
+    }))
+});
+
+gulp.task('html', function() {
+  gulp.src(dir.dist + "/*.html")
+    .pipe(plugins.htmlmin(config.htmlmin))
+    .pipe(gulp.dest(dir.dist))
+    .pipe(plugins.size({
+      title: 'min html'
     }))
 });
 
@@ -317,8 +331,7 @@ gulp.task("webpack:build", function(callback) {
 });
 
 var myDevConfig = Object.create(webpackConfig);
-myDevConfig.devtool =
-  "sourcemap";
+myDevConfig.devtool = "sourcemap";
 myDevConfig.debug = true;
 
 var devCompiler = webpack(myDevConfig);
