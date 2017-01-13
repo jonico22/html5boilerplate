@@ -279,6 +279,7 @@ gulp.task('cssnano', ['css'], function() {
 
 gulp.task('html', function() {
   gulp.src(dir.dist + "/*.html")
+    .pipe(plugins.useref())
     .pipe(plugins.htmlmin(config.htmlmin))
     .pipe(gulp.dest(dir.dist))
     .pipe(plugins.size({

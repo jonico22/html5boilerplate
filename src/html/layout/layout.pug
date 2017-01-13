@@ -3,12 +3,15 @@ doctype html
 html(lang=page.lang)
   head
     include partial/head.pug
-    title hola
+    title My web site
     block css
-      link(rel='stylesheet', href='css/style.css')
+    // build:css css/style.min.css
+    link(rel='stylesheet', href='css/style.css')
+    // endbuild
   body
     .wrapper
       include partial/header.pug
       block content
       include partial/footer.pug
       block javascript
+      script(src="js/scripts.min.js")

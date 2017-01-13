@@ -1,10 +1,13 @@
 extends ../layout/layout.pug
-
+block css
+  // build:css css/plugin.min.css
+  link(rel='stylesheet', href='css/plugin.css')
+  // endbuild
 block content
   .container
     .row
       h1 My Article
 block javascript
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js')
-    script(src='https://cdn.jsdelivr.net/foundation/6.2.3/foundation.min.js')
-    script(src="js/scripts.min.js")
+  // build:js js/plugins.min.js
+  script(src='js/plugin.js')
+  // endbuild
