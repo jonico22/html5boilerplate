@@ -79,6 +79,11 @@ var config = {
     }
   },
   sprite: {
+    shape :{
+      spacing: {
+          padding: 2
+      }
+    },
     mode: {
       css: {
         prefix: ".icon-",
@@ -121,7 +126,7 @@ gulp.task('webp', function() {
 })
 
 gulp.task('svg', function() {
-  gulp.src(paths.spriteSvg)
+  gulp.src(paths.svg)
     .pipe(plugins.svgmin(config.svgmin))
     .pipe(gulp.dest(dir.dist + '/svg'))
     .pipe(plugins.size({
