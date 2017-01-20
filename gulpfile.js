@@ -5,6 +5,7 @@ var gulp = require('gulp');
 var del = require('del');
 var runSequence = require('run-sequence');
 var pngquant = require('imagemin-pngquant');
+
 //browser reload
 var browserSync = require('browser-sync').create();
 var bulkSass = require('gulp-sass-bulk-import');
@@ -109,6 +110,14 @@ var config = {
     collapseBooleanAttributes: true,
   }
 }
+
+var validate = require('gulp-w3c-css');
+
+gulp.task('css:validate', function() {
+  gulp.src(dir.dist + '/css/*.css')
+    .pipe(validate())
+    .pipe(gulp.dest(dir.dist + '/reporter'));
+})
 
 gulp.task('img', function() {
   gulp.src(paths.img)
@@ -328,7 +337,7 @@ gulp.task("webpack:build", function(callback) {
   );
 
   webpack(myConfig, function(err, stats) {
-    if (err) throw new gutil.PluginError("webpack:build", err);
+    if (err) throw new plugins.util.PluginError("webpack:build", err);
     plugins.util.log("[webpack:build]", stats.toString({
       colors: true
     }));
@@ -344,7 +353,7 @@ var devCompiler = webpack(myDevConfig);
 
 gulp.task("webpack:build-dev", function(callback) {
   devCompiler.run(function(err, stats) {
-    if (err) throw new gutil.PluginError("webpack:build-dev", err);
+    if (err) throw new plugins.util.PluginError("webpack:build-dev", err);
     plugins.util.log("[webpack:build-dev]", stats.toString({
       colors: true
     }));
