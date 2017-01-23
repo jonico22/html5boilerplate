@@ -8,7 +8,6 @@ var pngquant = require('imagemin-pngquant');
 
 //browser reload
 var browserSync = require('browser-sync').create();
-var bulkSass = require('gulp-sass-bulk-import');
 
 //plugins css
 var mqpacker = require('css-mqpacker'),
@@ -19,10 +18,7 @@ var mqpacker = require('css-mqpacker'),
 var webpack = require("webpack");
 var webpackConfig = require("./webpack.config.js");
 
-var gulpLoadPlugins = require('gulp-load-plugins');
-var plugins = gulpLoadPlugins();
-
-var generaterSvg = require('gulp-svg-sprite');
+var plugins = require('gulp-load-plugins')();
 
 var dir = {
   src: './src',
@@ -115,7 +111,7 @@ var validate = require('gulp-w3c-css');
 
 gulp.task('css:validate', function() {
   gulp.src(dir.dist + '/css/*.css')
-    .pipe(validate())
+    .pipe(plugins.w3cCss())
     .pipe(gulp.dest(dir.dist + '/reporter'));
 })
 
@@ -203,7 +199,7 @@ gulp.task('favicon', ['move:files'], function() {
 gulp.task('generate:sprites', function() {
   return gulp.src(paths.spriteSvg)
     .pipe(plugins.plumber())
-    .pipe(generaterSvg(config.sprite))
+    .pipe(plugins.svgSprite(config.sprite))
     .pipe(gulp.dest(dir.dist))
     .pipe(plugins.size({
       title: 'sprite - svg'
@@ -249,7 +245,7 @@ gulp.task('clean:styles', function() {
 gulp.task('css', ['clean:styles'], function() {
   return gulp.src(paths.sass)
     .pipe(plugins.plumber())
-    .pipe(bulkSass())
+    .pipe(plugins.sassBulkImport())
     .pipe(plugins.sourcemaps.init())
     .pipe(plugins.sass.sync({
       errLogToConsole: true,
