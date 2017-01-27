@@ -7,6 +7,10 @@
     "doc": "doc"
   },
   "scripts": {
+    "start": "gulp watch",
+    "serve": "browser-sync start --server --startPath \"dist\" --files \"dist/**/*.+(html|css|js)\" --browser \"google chrome\" ",
+    "watch": "gulp watch",
+    "build:dev": "parallelshell \"npm run serve\" \"npm run watch\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -56,6 +60,7 @@
     "gulp-webp": "^2.3.0",
     "imagemin-pngquant": "^5.0.0",
     "node-normalize-scss": "^1.4.0",
+    "parallelshell": "^2.0.0",
     "run-sequence": "^1.2.2",
     "webpack": "^1.14.0"
   }

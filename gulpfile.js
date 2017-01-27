@@ -26,10 +26,9 @@ var dir = {
 }
 
 var paths = {
-  css: ['./*.css', '!*.min.css'],
   sass: dir.src + '/css/**/*.scss',
   pug: dir.src + '/html/module/*.pug',
-  fonts: dir.src + '/fonts',
+  fonts: dir.src + '/fonts/',
   img: dir.src + '/img/**/*.+(png|jpeg|jpg|gif)',
   js: dir.src + '/js/**/*.js',
   svg: dir.src + '/svg/*.svg',
@@ -107,7 +106,6 @@ var config = {
   }
 }
 
-var validate = require('gulp-w3c-css');
 
 gulp.task('css:validate', function() {
   gulp.src(dir.dist + '/css/*.css')
@@ -173,7 +171,7 @@ gulp.task('htaccess', function() {
     }))
 })
 
-gulp.task('fonts', () => {
+gulp.task('fonts', function() {
   gulp
     .src(paths.fonts + '*.*')
     .pipe(gulp.dest(dir.dist + '/fonts'));
@@ -259,9 +257,11 @@ gulp.task('css', ['clean:styles'], function() {
     ]))
     .pipe(plugins.sourcemaps.write())
     .pipe(gulp.dest(dir.dist + "/css"))
+    .pipe(browserSync.reload({stream: true}))
     .pipe(plugins.size({
       title: 'css'
     }))
+
 });
 
 
@@ -297,27 +297,12 @@ gulp.task('html', function() {
     }))
 });
 
-gulp.task('watch', function() {
-  browserSync.init({
-    browser: ["google chrome"],
-    files: [dir.dist + "/css/*.css", dir.dist + "/js/*.js", dir.dist +
-      '/*.html'
-    ],
-    server: {
-      baseDir: dir.dist
-    }
-  });
+gulp.task('watch', function(done) {
   gulp.watch([dir.src + '/html/**/*.pug'], ['pug']);
-  gulp.watch(paths.sass, ['css']);
+  gulp.watch(paths.sass, ['css']).on('change', browserSync.reload);
   gulp.watch([paths.js], ["webpack:build-dev"]);
-});
 
-gulp.task("build-dev", ["webpack:build-dev"], function() {
-  gulp.watch([paths.js], ["webpack:build-dev"]);
 });
-
-// Production build
-gulp.task("build", ["webpack:build"]);
 
 gulp.task("webpack:build", function(callback) {
 
