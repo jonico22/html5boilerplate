@@ -1,2 +1,2 @@
 console.log('hola webpack');
-console.log('prueba hola');
+console.log('prueba');

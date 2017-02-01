@@ -265,10 +265,32 @@ gulp.task('css', ['clean:styles'], function() {
 });
 
 
+gulp.task('web', function(callback) {
+  runSequence('pug', ['normalize', 'css','fonts'],'webpack:build',callback);
+});
+
 gulp.task('default', function(callback) {
-  runSequence('pug', ['humans', 'robots', 'htaccess', 'fonts', 'sprites'],
-    'normalize', 'css',
-    callback);
+  runSequence('static',['normalize', 'css','fonts'],'webpack:build',callback);
+});
+
+gulp.task('media', function(callback) {
+  runSequence('img', ['svg', 'webp'] , callback);
+});
+
+gulp.task('static', function(callback) {
+  runSequence('htaccess', 'robots','humans', callback);
+});
+
+gulp.task('watch:pug', function() {
+  gulp.watch([dir.src + '/html/**/*.pug'], ['pug']).on('change', browserSync.reload);
+});
+
+gulp.task('watch:css', function() {
+  gulp.watch(paths.sass, ['css']).on('change', browserSync.reload);
+});
+
+gulp.task('watch:js', function() {
+  gulp.watch([paths.js], ["webpack:build-dev"]);
 });
 
 gulp.task('cssnano', ['css'], function() {
@@ -295,13 +317,6 @@ gulp.task('html', function() {
     .pipe(plugins.size({
       title: 'min html'
     }))
-});
-
-gulp.task('watch', function(done) {
-  gulp.watch([dir.src + '/html/**/*.pug'], ['pug']);
-  gulp.watch(paths.sass, ['css']).on('change', browserSync.reload);
-  gulp.watch([paths.js], ["webpack:build-dev"]);
-
 });
 
 gulp.task("webpack:build", function(callback) {

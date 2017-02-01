@@ -541,22 +541,42 @@ gulp.task("webpack:build", function(callback) {
 
 ### TAREA PROGRAMADAS
 
-** NPM BUILD**
+**SERVE LOCAL**
+
+```javascript
+
+npm run serve
+
+```
+
+Este comando te permite levantar un servidor web mediante un archivo index.html el cual se actualiza cuando recibe cambios en css , javascript y html.
+
+
+``
+"serve": "browser-sync start --server --startPath \"dist\" --files\"dist/**/*.+(html|css|js)\" --browser \"google chrome\" ",
+``
+
+**WATCH**
+
+```javascript
+
+npm run watch
+
+```
+
+Este comando te permite ejecutar una tarea de gulp.js en este caso sirve para escuchar los archivos que estan haciendo modificados( SASS - JAVASCRIPT - PUG)
 
 ``` JavaScript
-gulp.task('watch', function() {
-  browserSync.init({
-    browser: ["google chrome"],
-    files: [dir.dist + "/css/*.css", dir.dist + "/js/*.js", dir.dist +
-      '/*.html'
-    ],
-    server: {
-      baseDir: dir.dist
-    }
-  });
+gulp.task('watch', function(done) {
   gulp.watch([dir.src + '/html/**/*.pug'], ['pug']);
   gulp.watch(paths.sass, ['css']);
   gulp.watch([paths.js], ["webpack:build-dev"]);
 });
 
 ```
+
+**NPM RUN BUILD:DEV**
+
+Este comando permite levantar dos comandos en paralelo gracias al paquete **parallelshell** iniciamos un servidor web y escucha los archivos sass , pug , javascript cuando hubiera un cambio y lo compila.
+
+`` "build:dev": "parallelshell \"npm run serve\" \"npm run watch\"" ``
