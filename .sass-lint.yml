@@ -1,5 +1,5 @@
 files:
-  include: 'assest/css/**/*.scss'
+  include: 'src/css/**/*.scss'
 options:
   formatter: stylish
   merge-default-rules: false

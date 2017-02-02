@@ -5,9 +5,9 @@ var gulp = require('gulp');
 var del = require('del');
 var runSequence = require('run-sequence');
 var pngquant = require('imagemin-pngquant');
+
 //browser reload
 var browserSync = require('browser-sync').create();
-var bulkSass = require('gulp-sass-bulk-import');
 
 //plugins css
 var mqpacker = require('css-mqpacker'),
@@ -18,10 +18,7 @@ var mqpacker = require('css-mqpacker'),
 var webpack = require("webpack");
 var webpackConfig = require("./webpack.config.js");
 
-var gulpLoadPlugins = require('gulp-load-plugins');
-var plugins = gulpLoadPlugins();
-
-var generaterSvg = require('gulp-svg-sprite');
+var plugins = require('gulp-load-plugins')();
 
 var dir = {
   src: './src',
@@ -29,10 +26,9 @@ var dir = {
 }
 
 var paths = {
-  css: ['./*.css', '!*.min.css'],
   sass: dir.src + '/css/**/*.scss',
   pug: dir.src + '/html/module/*.pug',
-  fonts: dir.src + '/fonts',
+  fonts: dir.src + '/fonts/',
   img: dir.src + '/img/**/*.+(png|jpeg|jpg|gif)',
   js: dir.src + '/js/**/*.js',
   svg: dir.src + '/svg/*.svg',
@@ -79,6 +75,11 @@ var config = {
     }
   },
   sprite: {
+    shape :{
+      spacing: {
+          padding: 2
+      }
+    },
     mode: {
       css: {
         prefix: ".icon-",
@@ -105,6 +106,13 @@ var config = {
   }
 }
 
+
+gulp.task('css:validate', function() {
+  gulp.src(dir.dist + '/css/*.css')
+    .pipe(plugins.w3cCss())
+    .pipe(gulp.dest(dir.dist + '/reporter'));
+})
+
 gulp.task('img', function() {
   gulp.src(paths.img)
     .pipe(plugins.imagemin(config.imagemin))
@@ -121,7 +129,7 @@ gulp.task('webp', function() {
 })
 
 gulp.task('svg', function() {
-  gulp.src(paths.spriteSvg)
+  gulp.src(paths.svg)
     .pipe(plugins.svgmin(config.svgmin))
     .pipe(gulp.dest(dir.dist + '/svg'))
     .pipe(plugins.size({
@@ -163,7 +171,7 @@ gulp.task('htaccess', function() {
     }))
 })
 
-gulp.task('fonts', () => {
+gulp.task('fonts', function() {
   gulp
     .src(paths.fonts + '*.*')
     .pipe(gulp.dest(dir.dist + '/fonts'));
@@ -189,7 +197,7 @@ gulp.task('favicon', ['move:files'], function() {
 gulp.task('generate:sprites', function() {
   return gulp.src(paths.spriteSvg)
     .pipe(plugins.plumber())
-    .pipe(generaterSvg(config.sprite))
+    .pipe(plugins.svgSprite(config.sprite))
     .pipe(gulp.dest(dir.dist))
     .pipe(plugins.size({
       title: 'sprite - svg'
@@ -235,7 +243,7 @@ gulp.task('clean:styles', function() {
 gulp.task('css', ['clean:styles'], function() {
   return gulp.src(paths.sass)
     .pipe(plugins.plumber())
-    .pipe(bulkSass())
+    .pipe(plugins.sassBulkImport())
     .pipe(plugins.sourcemaps.init())
     .pipe(plugins.sass.sync({
       errLogToConsole: true,
@@ -249,16 +257,40 @@ gulp.task('css', ['clean:styles'], function() {
     ]))
     .pipe(plugins.sourcemaps.write())
     .pipe(gulp.dest(dir.dist + "/css"))
+    .pipe(browserSync.reload({stream: true}))
     .pipe(plugins.size({
       title: 'css'
     }))
+
 });
 
 
+gulp.task('web', function(callback) {
+  runSequence('pug', ['normalize', 'css','fonts'],'webpack:build',callback);
+});
+
 gulp.task('default', function(callback) {
-  runSequence('pug', ['humans', 'robots', 'htaccess', 'fonts', 'sprites'],
-    'normalize', 'css',
-    callback);
+  runSequence('static',['normalize', 'css','fonts'],'webpack:build',callback);
+});
+
+gulp.task('media', function(callback) {
+  runSequence('img', ['svg', 'webp'] , callback);
+});
+
+gulp.task('static', function(callback) {
+  runSequence('htaccess', 'robots','humans', callback);
+});
+
+gulp.task('watch:pug', function() {
+  gulp.watch([dir.src + '/html/**/*.pug'], ['pug']).on('change', browserSync.reload);
+});
+
+gulp.task('watch:css', function() {
+  gulp.watch(paths.sass, ['css']).on('change', browserSync.reload);
+});
+
+gulp.task('watch:js', function() {
+  gulp.watch([paths.js], ["webpack:build-dev"]);
 });
 
 gulp.task('cssnano', ['css'], function() {
@@ -287,28 +319,6 @@ gulp.task('html', function() {
     }))
 });
 
-gulp.task('watch', function() {
-  browserSync.init({
-    browser: ["google chrome"],
-    files: [dir.dist + "/css/*.css", dir.dist + "/js/*.js", dir.dist +
-      '/*.html'
-    ],
-    server: {
-      baseDir: dir.dist
-    }
-  });
-  gulp.watch([dir.src + '/html/**/*.pug'], ['pug']);
-  gulp.watch(paths.sass, ['css']);
-  gulp.watch([paths.js], ["webpack:build-dev"]);
-});
-
-gulp.task("build-dev", ["webpack:build-dev"], function() {
-  gulp.watch([paths.js], ["webpack:build-dev"]);
-});
-
-// Production build
-gulp.task("build", ["webpack:build"]);
-
 gulp.task("webpack:build", function(callback) {
 
   var myConfig = Object.create(webpackConfig);
@@ -323,7 +333,7 @@ gulp.task("webpack:build", function(callback) {
   );
 
   webpack(myConfig, function(err, stats) {
-    if (err) throw new gutil.PluginError("webpack:build", err);
+    if (err) throw new plugins.util.PluginError("webpack:build", err);
     plugins.util.log("[webpack:build]", stats.toString({
       colors: true
     }));
@@ -339,7 +349,7 @@ var devCompiler = webpack(myDevConfig);
 
 gulp.task("webpack:build-dev", function(callback) {
   devCompiler.run(function(err, stats) {
-    if (err) throw new gutil.PluginError("webpack:build-dev", err);
+    if (err) throw new plugins.util.PluginError("webpack:build-dev", err);
     plugins.util.log("[webpack:build-dev]", stats.toString({
       colors: true
     }));

@@ -7,6 +7,24 @@
     "doc": "doc"
   },
   "scripts": {
+    "start": "gulp",
+    "static": "gulp static",
+    "media": "gulp media",
+    "fonts": "gulp fonts",
+    "sprite-svg": "gulp sprite",
+    "favicon": "gulp favicon",
+    "web":"gulp web",
+    "serve": "browser-sync start --server --startPath \"dist\" --files \"dist/**/*.+(html|css|js)\" --browser \"google chrome\" ",
+    "pug": "gulp watch:pug",
+    "sass": "gulp watch:css",
+    "es6": "gulp watch:js",
+    "html": "gulp html",
+    "css": "gulp cssnano",
+    "js":"gulp webpack:build",
+    "watch": "parallelshell \"npm run sass\" \"npm run es6\" ",
+    "watch:dev": "parallelshell \"npm run pug\" \"npm run sass\" \"npm run es6\" ",
+    "build:dev": "parallelshell \"npm run serve\" \"npm run watch:dev\"",
+    "build:prod": "npm run html && npm run css && npm run js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -51,10 +69,12 @@
     "gulp-svgmin": "^1.2.3",
     "gulp-useref": "^3.1.2",
     "gulp-util": "^3.0.8",
+    "gulp-w3c-css": "^1.0.1",
     "gulp-w3cjs": "^1.3.0",
     "gulp-webp": "^2.3.0",
     "imagemin-pngquant": "^5.0.0",
     "node-normalize-scss": "^1.4.0",
+    "parallelshell": "^2.0.0",
     "run-sequence": "^1.2.2",
     "webpack": "^1.14.0"
   }
