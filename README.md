@@ -584,7 +584,6 @@ Este comando permite levantar dos comandos en paralelo gracias al paquete **para
 
 ## ESTRUCTURA CSS
 
-|-- github
     |-- .bowerrc
     |-- .editorconfig
     |-- .gitattributes
@@ -638,4 +637,3 @@ Este comando permite levantar dos comandos en paralelo gracias al paquete **para
         |   |-- google-plus.svg
         |   |-- gorjeo.svg
         |-- svg
-
