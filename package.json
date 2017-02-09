@@ -1,6 +1,7 @@
 {
   "name": "html5boilerplate",
   "version": "1.0.0",
+  "sasslintConfig": "./.sass-lint.yml",
   "description": "html5 boilerplate implement pug , sass , gulp",
   "main": "index.js",
   "directories": {
@@ -78,4 +79,5 @@
     "run-sequence": "^1.2.2",
     "webpack": "^1.14.0"
   }
+  
 }

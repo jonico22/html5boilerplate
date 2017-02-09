@@ -580,3 +580,62 @@ gulp.task('watch', function(done) {
 Este comando permite levantar dos comandos en paralelo gracias al paquete **parallelshell** iniciamos un servidor web y escucha los archivos sass , pug , javascript cuando hubiera un cambio y lo compila.
 
 `` "build:dev": "parallelshell \"npm run serve\" \"npm run watch\"" ``
+
+
+## ESTRUCTURA CSS
+
+|-- github
+    |-- .bowerrc
+    |-- .editorconfig
+    |-- .gitattributes
+    |-- .gitignore
+    |-- .sass-lint.yml
+    |-- README.md
+    |-- bower.json
+    |-- gulpfile.js
+    |-- package.json
+    |-- webpack.config.js
+    |-- .vscode
+    |   |-- settings.json
+    |-- src
+        |-- css
+        |   |-- style.scss
+        |   |-- base
+        |   |   |-- _reset.scss
+        |   |   |-- _variables.scss
+        |   |-- components
+        |   |-- settings
+        |   |-- theme
+        |   |-- tools
+        |   |   |-- plugins
+        |   |-- view
+        |-- fonts
+        |   |-- opensans-bold-webfont.ttf
+        |-- html
+        |   |-- 404.pug
+        |   |-- index.pug
+        |   |-- config
+        |   |   |-- .gitkeep
+        |   |   |-- page.pug
+        |   |-- layout
+        |   |   |-- layout.pug
+        |   |   |-- partial
+        |   |       |-- footer.pug
+        |   |       |-- head.pug
+        |   |       |-- header.pug
+        |   |       |-- meta.pug
+        |   |-- mixins
+        |   |   |-- ie.jade
+        |   |   |-- mixins.jade
+        |   |-- module
+        |       |-- index.pug
+        |-- img
+        |   |-- logo.png
+        |-- js
+        |   |-- scripts.js
+        |-- sprites
+        |   |-- facebook.svg
+        |   |-- google-plus.svg
+        |   |-- gorjeo.svg
+        |-- svg
+
