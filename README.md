@@ -16,6 +16,7 @@ Gulp - [Documentación](http://gulpjs.com/)
 Reportes con Insights PageSpeed -
 [PSI](https://github.com/joeyhoer/psi/tree/mrt)
 
+
 ### Instalación
 
 Dependencias globales
@@ -25,6 +26,10 @@ Dependencias globales
 Dependencias desarrollo
 
 ``` npm install ```
+
+Ejecución de cron de crear arbol de archivo
+
+``` chmod u+x job.sh. ```
 
 ### Configuracion
 
@@ -40,7 +45,7 @@ Dependencias desarrollo
 
   ` var runSequence = require('run-sequence'); `
 
-> **Nota.- **
+> **Nota** .-
 > Se pretende que sea una solución temporal hasta el lanzamiento de gulp 4.0 que tiene soporte para definir dependencias de tareas en serie o en paralelo .
 
 **imagemin-pngquant** .- Minifica imagenes .png
@@ -584,18 +589,6 @@ Este comando permite levantar dos comandos en paralelo gracias al paquete **para
 
 ## ESTRUCTURA CSS
 
-    |-- .bowerrc
-    |-- .editorconfig
-    |-- .gitattributes
-    |-- .gitignore
-    |-- .sass-lint.yml
-    |-- README.md
-    |-- bower.json
-    |-- gulpfile.js
-    |-- package.json
-    |-- webpack.config.js
-    |-- .vscode
-    |   |-- settings.json
     |-- src
         |-- css
         |   |-- style.scss
@@ -637,3 +630,13 @@ Este comando permite levantar dos comandos en paralelo gracias al paquete **para
         |   |-- google-plus.svg
         |   |-- gorjeo.svg
         |-- svg
+    |-- .bowerrc
+    |-- .editorconfig
+    |-- .gitattributes
+    |-- .gitignore
+    |-- .sass-lint.yml
+    |-- README.md
+    |-- bower.json
+    |-- gulpfile.js
+    |-- package.json
+    |-- webpack.config.js

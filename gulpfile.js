@@ -207,7 +207,7 @@ gulp.task('generate:sprites', function() {
 gulp.task('copy:sprites', ['generate:sprites'], function() {
   gulp.src(dir.dist + '/css/sprite.scss')
     .pipe(plugins.rename('_sprite.scss'))
-    .pipe(gulp.dest(dir.src + '/css/plugins'))
+    .pipe(gulp.dest(dir.src + '/tools/plugins'))
 });
 
 gulp.task('sprites', ['copy:sprites'], function() {
@@ -216,7 +216,7 @@ gulp.task('sprites', ['copy:sprites'], function() {
 
 gulp.task('normalize', function() {
   gulp.src('node_modules/node-normalize-scss/_normalize.scss')
-    .pipe(gulp.dest(dir.src + '/css/plugins'))
+    .pipe(gulp.dest(dir.src + '/css/base'))
 })
 
 // Compile pug to HTML
